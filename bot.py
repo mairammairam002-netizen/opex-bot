@@ -1,5 +1,4 @@
-import pytesseract
-from PIL import Image
+
 import ioimport telebot
 from telebot import types
 import datetime
@@ -143,37 +142,20 @@ def send_check_auto(message):
     waiting_check.pop(user_id)
     bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}")
 
-bot.infinity_polling()
-# ===== Проверка скрина оплаты =====
 @bot.message_handler(content_types=['photo'])
-def check_payment(message):
+def handle_screenshot(message):
     chat_id = message.chat.id
-
-    if chat_id not in pending:
+    if chat_id not in pending:  # pending = выбранная сумма
         return
 
     amount = pending.get(chat_id)
 
-    # скачать фото
-    file_info = bot.get_file(message.photo[-1].file_id)
-    file = bot.download_file(file_info.file_path)
+    # Отправка админу
+    bot.send_photo(
+        ADMIN_ID,
+        message.photo[-1].file_id,
+        caption=f"📌 СКРИН ОПЛАТЫ\nID: {chat_id}\nСумма: {amount}"
+    )
 
-    # распознать текст
-    image = Image.open(io.BytesIO(file))
-    text = pytesseract.image_to_string(image)
-
-    # проверка суммы
-    if str(int(amount)) in text:
-        # отправка админу
-        bot.send_photo(
-            ADMIN_ID,
-            message.photo[-1].file_id,
-            caption=f"✅ Оплата\nID: {chat_id}\nСумма: {amount}"
-        )
-
-        bot.send_message(chat_id, "✅ Оплата подтверждена")
-    else:
-        bot.send_message(
-            chat_id,
-            f"❌ Неверная сумма!\nОплатите {amount} сом и отправьте снова"
-        )
+    # Сообщение клиенту
+    bot.send_message(chat_id, "✅ Скрин получен, ожидайте проверки")
