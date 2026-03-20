@@ -1,4 +1,6 @@
-import telebot
+import pytesseract
+from PIL import Image
+import ioimport telebot
 from telebot import types
 import datetime
 TOKEN = "8712446245:AAEXS7fjGWQqHiUmBljEM7GXmRNlA60sbpE"
@@ -57,9 +59,11 @@ def fast_amount(message):
     confirm.row('📸 Отправил скрин')
     confirm.row('🔙 Назад')
 
-    bot.send_photo(chat_id, QR_FILE_ID,
-                   caption=f"💰 Вы выбрали {amount}\nК оплате с комиссией: {total}\n\nОтправьте скрин оплаты и нажмите '📸 Отправил скрин'",
-                   reply_markup=confirm)
+    bot.send_photo(
+    chat_id,
+    open("qr.png", "rb"),
+    caption=f"💳 Оплатите {amount} сом\n\n📸 После оплаты отправьте скрин"
+)
 
 # ===== Другая сумма =====
 @bot.message_handler(func=lambda m: m.text == 'Другая сумма')
@@ -140,3 +144,36 @@ def send_check_auto(message):
     bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}")
 
 bot.infinity_polling()
+# ===== Проверка скрина оплаты =====
+@bot.message_handler(content_types=['photo'])
+def check_payment(message):
+    chat_id = message.chat.id
+
+    if chat_id not in pending:
+        return
+
+    amount = pending.get(chat_id)
+
+    # скачать фото
+    file_info = bot.get_file(message.photo[-1].file_id)
+    file = bot.download_file(file_info.file_path)
+
+    # распознать текст
+    image = Image.open(io.BytesIO(file))
+    text = pytesseract.image_to_string(image)
+
+    # проверка суммы
+    if str(int(amount)) in text:
+        # отправка админу
+        bot.send_photo(
+            ADMIN_ID,
+            message.photo[-1].file_id,
+            caption=f"✅ Оплата\nID: {chat_id}\nСумма: {amount}"
+        )
+
+        bot.send_message(chat_id, "✅ Оплата подтверждена")
+    else:
+        bot.send_message(
+            chat_id,
+            f"❌ Неверная сумма!\nОплатите {amount} сом и отправьте снова"
+        )
