@@ -1,7 +1,8 @@
 
-import ioimport telebot
+import telebot
 from telebot import types
 import datetime
+
 TOKEN = "8712446245:AAEXS7fjGWQqHiUmBljEM7GXmRNlA60sbpE"
 ADMIN_ID = 6102437732
 QR_FILE_ID = "AgACAgIAAxkBAAOQablujGlEzd0a5HYF0r-QLbY1KL8AAq4UaxusC8FJKsSCDqO4Qy0BAAMCAAN5AAM6BA"
@@ -58,11 +59,9 @@ def fast_amount(message):
     confirm.row('📸 Отправил скрин')
     confirm.row('🔙 Назад')
 
-    bot.send_photo(
-    chat_id,
-    open("qr.png", "rb"),
-    caption=f"💳 Оплатите {amount} сом\n\n📸 После оплаты отправьте скрин"
-)
+    bot.send_photo(chat_id, QR_FILE_ID,
+                   caption=f"💰 Вы выбрали {amount}\nК оплате с комиссией: {total}\n\nОтправьте скрин оплаты и нажмите '📸 Отправил скрин'",
+                   reply_markup=confirm)
 
 # ===== Другая сумма =====
 @bot.message_handler(func=lambda m: m.text == 'Другая сумма')
@@ -142,20 +141,4 @@ def send_check_auto(message):
     waiting_check.pop(user_id)
     bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}")
 
-@bot.message_handler(content_types=['photo'])
-def handle_screenshot(message):
-    chat_id = message.chat.id
-    if chat_id not in pending:  # pending = выбранная сумма
-        return
-
-    amount = pending.get(chat_id)
-
-    # Отправка админу
-    bot.send_photo(
-        ADMIN_ID,
-        message.photo[-1].file_id,
-        caption=f"📌 СКРИН ОПЛАТЫ\nID: {chat_id}\nСумма: {amount}"
-    )
-
-    # Сообщение клиенту
-    bot.send_message(chat_id, "✅ Скрин получен, ожидайте проверки")
+bot.infinity_polling()
