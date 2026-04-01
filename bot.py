@@ -5,7 +5,7 @@ import datetime
 
 TOKEN = "8712446245:AAEXS7fjGWQqHiUmBljEM7GXmRNlA60sbpE"
 ADMIN_ID = 6102437732
-QR_FILE_ID = "AgACAgIAAxkBAAOQablujGlEzd0a5HYF0r-QLbY1KL8AAq4UaxusC8FJKsSCDqO4Qy0BAAMCAAN5AAM6BA"
+
 
 bot = telebot.TeleBot(TOKEN)
 pending = {}         # {chat_id: сумма с комиссией}
