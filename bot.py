@@ -142,3 +142,6 @@ def send_check_auto(message):
     bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}")
 
 bot.infinity_polling()
+@bot.message_handler(content_types=['photo'])
+def get_file_id(message):
+    bot.send_message(message.chat.id, message.photo[-1].file_id)
