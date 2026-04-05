@@ -145,3 +145,6 @@ bot.infinity_polling()
 @bot.message_handler(content_types=['photo'])
 def get_file_id(message):
     bot.send_message(message.chat.id, message.photo[-1].file_id)
+@bot.message_handler(content_types=['photo'])
+def get_file_id(message):
+    bot.reply_to(message, message.photo[-1].file_id)
