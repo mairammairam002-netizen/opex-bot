@@ -5,7 +5,8 @@ import datetime
 
 TOKEN = "8712446245:AAEXS7fjGWQqHiUmBljEM7GXmRNlA60sbpE"
 ADMIN_ID = 6102437732
-
+📌 QR ID:
+AgACAgIAAxkBAAN-adPg4Unpdzn5c1V3wqa-QnxnVJsAAmAVaxtvKaFK2Os-3Hz7Y9IBAAMCAAN4AAM7BA
 
 bot = telebot.TeleBot(TOKEN)
 pending = {}         # {chat_id: сумма с комиссией}
@@ -141,8 +142,4 @@ def get_file_id(message):
 
     pending.pop(user_id, None)
     waiting_check.popmessage.photo(user_id)
-    bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}")
-
-bot.infinity_polling()
-@bot.message_handler(content_types=['photo'])
-def get_file_id(message):
+    bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}"
