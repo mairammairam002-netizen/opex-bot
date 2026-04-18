@@ -101,7 +101,12 @@ def confirm_payment(message):
     # кнопка подтверждения для админа
     markup = types.InlineKeyboardMarkup()
     confirm_btn = types.InlineKeyboardButton("✅ Подтвердить чек", callback_data=f"confirm_{chat_id}")
-    markup.add(confirm_btn)
+  if not check or not waiting_check:
+    return
+
+@bot.message_handler(content_types=['photo'])
+def get_file_id(message):
+    bot.reply_to(message, message.photo[-1].file_id)  markup.add(confirm_btn)
 
     caption = (
         f"📌 ЗАЯВКА\n"
@@ -127,12 +132,7 @@ def approve_check(call):
 @bot.message_handler(func=lambda m: m.from_user.id == ADMIN_ID)
 def send_check_auto(message):
     check = message.text.strip()
-    if not check or not waiting_check:
-    return
 
-@bot.message_handler(content_types=['photo'])
-def get_file_id(message):
-    bot.reply_to(message, message.photo[-1].file_id)
 
     user_id = list(waiting_check.keys())[0]
     amount = pending.get(user_id, "неизвестно")
