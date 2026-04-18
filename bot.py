@@ -5,9 +5,7 @@ import datetime
 
 TOKEN = "8712446245:AAEXS7fjGWQqHiUmBljEM7GXmRNlA60sbpE"
 ADMIN_ID = 6102437732
-📌 QR ID:
-"AgACAgIAAxkBAAN-adPg4Unpdzn5c1V3wqa-QnxnVJsAAmAVaxtvKaFK2Os-3Hz7Y9IBAAMCAAN4AAM7BA"
-
+QR_FILE_ID = "AgACAgIAAxkBAAN-adPg4Unpdzn5c1V3wqa-QnxnVJsAAmAVaxtvKaFK2Os-3Hz7Y9IBAAMCAAN4AAM7BA"
 bot = telebot.TeleBot(TOKEN)
 pending = {}         # {chat_id: сумма с комиссией}
 waiting_check = {}   # {chat_id: True} — ждём ввод чека
@@ -130,16 +128,18 @@ def approve_check(call):
 def send_check_auto(message):
     check = message.text.strip()
     if not check or not waiting_check:
-        return@bot.message_handler(content_types=['photo'])
+    return
+
+@bot.message_handler(content_types=['photo'])
 def get_file_id(message):
     bot.reply_to(message, message.photo[-1].file_id)
 
     user_id = list(waiting_check.keys())[0]
     amount = pending.get(user_id, "неизвестно")
 
-    bot.send_message(user_id,,
+    bot.send_message(user_id,
                      f"✅ Оплата подтверждена\nOPEX успешно куплен\nСумма к оплате: {amount}\n📄 Чек: {check}\nСпасибо за покупку!")
 
     pending.pop(user_id, None)
-    waiting_check.popmessage.photo(user_id)
+    waiting_check.pop(user_id, None)
     bot.send_message(ADMIN_ID, f"✅ Чек {check} отправлен клиенту {user_id}"
