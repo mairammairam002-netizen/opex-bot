@@ -3,7 +3,7 @@ import telebot
 from telebot import types
 import datetime
 
-TOKEN = "8712446245:AAEXS7fjGWQqHiUmBljEM7GXmRNlA60sbpE"
+TOKEN = "8712446245:AAFK1CIsWN_a2wtcHbqphznrtO8SzgjUTZc"
 ADMIN_ID = 6102437732
 QR_FILE_ID = "AgACAgIAAxkBAAN-adPg4Unpdzn5c1V3wqa-QnxnVJsAAmAVaxtvKaFK2Os-3Hz7Y9IBAAMCAAN4AAM7BA"
 bot = telebot.TeleBot(TOKEN)
